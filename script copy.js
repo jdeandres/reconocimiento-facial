@@ -1,19 +1,38 @@
+navigator.getUserMedia = ( navigator.getUserMedia ||
+                            navigator.webkitGetUserMedia ||
+                            navigator.mozGetUserMedia ||
+                            navigator.msGetUserMedia);
+                            
 const elVideo = document.getElementById('video');
 
-navigator.getMedia = (navigator.getUserMedia ||
-    navigator.webkitGetUserMedia ||
-    navigator.mozGetUserMedia);
-
-
 const cargarCamera = () => {
-    navigator.getMedia(
-        {
-            video: true,
-            audio: false
+    //navigator.getMedia(
+    //    {
+    //        video: true,
+    //        audio: false
+    //    },
+    //    stream => elVideo.srcObject = stream,
+    //    console.error
+    //)
+    console.log("getUserMedia supported "+ JSON.stringify(navigator.getUserMedia));
+
+    if (navigator.getUserMedia) {
+        navigator.getUserMedia({ audio: false, video: { width: 1280, height: 720 } },
+        (stream) => {
+            //const video = document.querySelector('video');
+            //video.srcObject = stream;
+            //video.onloadedmetadata = (e) => {
+            //  video.play();
+            //};
+            elVideo.srcObject = stream
         },
-        stream => elVideo.srcObject = stream,
-        console.error
-    )
+        (err) => {
+            console.error(`The following error occurred: ${err.name}`);
+        }
+        );
+    } else {
+        console.log("getUserMedia not supported");
+    }
 }
 
 let labeledFaceDesciptor;
@@ -79,7 +98,7 @@ elVideo.addEventListener('play', async () => {
 
 async function loadLabeledImages() {
     console.log(new Date());
-    const labels = ['Santiago Galvez', 'Candelaria de Goycoechea', 'Chris Hemsworth', 'Robert Downey jr','Cris Evans']
+    const labels = ['Joel de Andres','Joel de Andres-lentes','Juan Alonso','Santiago Galvez', 'Candelaria de Goycoechea', 'Chris Hemsworth', 'Robert Downey jr','Cris Evans']
     return Promise.all(
         labels.map(async label => {
             const descriptions = []
